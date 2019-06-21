@@ -24,7 +24,7 @@ var shootControl = 0;
 var enemies = []
 var score = 0
 var scoreText;
-var spawnControl = 0
+var spawnControl = 1
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
@@ -266,18 +266,20 @@ function createGummi() {
 }
 
 function spawnEnemy() {
-    console.log(spawnControl)
+    
     //Loading an obj file
     //const objLoader = new THREE.OBJLoader2();
 
-    if (spawnControl > 0 && spawnControl < 10000) {
+    if (spawnControl > 0 && spawnControl < 500) {
+        console.log("entrou")
         spawnControl++
     }
 
-    if (spawnControl == 10000) {
+    if (spawnControl == 500) {
         spawnControl = 0
     }
 
+    
     if (spawnControl == 0) {
             const mtlLoader = new THREE.MTLLoader();
     
@@ -311,15 +313,11 @@ function spawnEnemy() {
                     scene.add(mesh)
                     //levelPivot.add(enemy);
 
-
-                    
-    
                 });
             });
+            spawnControl = 1
         
     }
-
-
     //update
 
     if(enemies.length > 0){
