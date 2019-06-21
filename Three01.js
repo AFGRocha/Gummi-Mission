@@ -291,8 +291,9 @@ function spawnEnemy() {
                     mesh = object;
                     mesh.position.y = 5;
                     mesh.position.x = 0
-                    mesh.position.z = - 30
-                    mesh.rotateY(-Math.PI / 2)
+                    mesh.position.z = - 100
+                    //mesh.rotateY(-Math.PI / 2)
+                    mesh.rotateX(2*Math.PI/18)
                     mesh.scale.set(0.02, 0.02, 0.02)
                     mesh.name = "enemy"
     
@@ -322,7 +323,7 @@ function spawnEnemy() {
 
     if(enemies.length > 0){
         for(let i = 0; i < enemies.length; i++){
-            enemies[i].position.x += 1
+            enemies[i].position.z += 0.1
         }
     }
 }
