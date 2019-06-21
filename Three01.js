@@ -12,12 +12,19 @@ var levelPivot = new THREE.Object3D();
 var sphere;
 var plateRock;
 var enemy = new THREE.Object3D();
+var enemies = []
+var enemyBoxes = []
 var shooting = 0;
 var shot;
 var shots = []
+var box;
+var box2
+var shotBoxes = []
 var shootControl = 0;
 var enemies = []
-
+var score = 0
+var scoreText;
+var spawnControl = 0
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
@@ -37,6 +44,7 @@ window.onload = function init() {
     camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 100);
     camera.position.z = 11.5;
     camera.position.y = 4;
+
 
 
     controls = new THREE.OrbitControls(camera);
@@ -62,37 +70,22 @@ window.onload = function init() {
     createGummi()
     createCrossair()
 
-    //Loading an obj file
-    //const objLoader = new THREE.OBJLoader2();
-    const mtlLoader = new THREE.MTLLoader();
 
-    mtlLoader.load('Untitled_2.mtl', function (materials) {
-        materials.preload(); // load a material’s resource
-        var objLoader = new THREE.OBJLoader();
-        objLoader.setMaterials(materials);
-        objLoader.load('Untitled_2.obj', function (object) {// load a geometry resource
-            mesh = object;
-            mesh.position.y = 5;
-            mesh.position.x = 0
-            mesh.position.z = - 10
-            mesh.rotateY(Math.PI)
-            mesh.scale.set(0.01, 0.01, 0.01)
-            mesh.name = "enemy"
 
-            mesh.traverse(function (child) {
-                if (child instanceof THREE.Mesh) {
 
-                    // apply custom material
-                    child.material.side = THREE.DoubleSide;
+    //Score
 
-                }
-            });
-
-            enemy.add(mesh)
-            levelPivot.add(enemy);
-
-        });
-    });
+    scoreText = document.createElement('div');
+    scoreText.style.position = 'absolute';
+    //scoreText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+    scoreText.style.width = 100;
+    scoreText.style.height = 100;
+    scoreText.style.color = "white";
+    scoreText.innerHTML = "Score: " + score;
+    scoreText.style.top = 50 + 'px';
+    scoreText.style.left = 50 + 'px';
+    scoreText.className = "khtext"
+    document.body.appendChild(scoreText);
 
 
     //Plate Rock
@@ -123,7 +116,7 @@ window.onload = function init() {
     directionalLight.castShadow = true;
     scene.add(directionalLight);
 
-
+    
     scene.add(levelPivot)
     animate()
 }
@@ -272,11 +265,75 @@ function createGummi() {
 
 }
 
+function spawnEnemy() {
+    console.log(spawnControl)
+    //Loading an obj file
+    //const objLoader = new THREE.OBJLoader2();
 
-function createCrossair(){
+    if (spawnControl > 0 && spawnControl < 10000) {
+        spawnControl++
+    }
+
+    if (spawnControl == 10000) {
+        spawnControl = 0
+    }
+
+    if (spawnControl == 0) {
+            const mtlLoader = new THREE.MTLLoader();
+    
+            mtlLoader.load('Untitled_2.mtl', function (materials) {
+                materials.preload(); // load a material’s resource
+                var objLoader = new THREE.OBJLoader();
+                objLoader.setMaterials(materials);
+                objLoader.load('Untitled_2.obj', function (object) {// load a geometry resource
+                    mesh = object;
+                    mesh.position.y = 5;
+                    mesh.position.x = 0
+                    mesh.position.z = - 30
+                    mesh.rotateY(-Math.PI / 2)
+                    mesh.scale.set(0.02, 0.02, 0.02)
+                    mesh.name = "enemy"
+    
+                    mesh.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
+    
+                            // apply custom material
+                            child.material.side = THREE.DoubleSide;
+    
+                        }
+                    });
+    
+                    box2 = new THREE.Box3().setFromObject(mesh);
+    
+                    //enemy.add(mesh)
+                    enemies.push(mesh)
+                    enemyBoxes.push(box2)
+                    scene.add(mesh)
+                    //levelPivot.add(enemy);
+
+
+                    
+    
+                });
+            });
+        
+    }
+
+
+    //update
+
+    if(enemies.length > 0){
+        for(let i = 0; i < enemies.length; i++){
+            enemies[i].position.x += 1
+        }
+    }
+}
+
+
+function createCrossair() {
     var geometry = new THREE.PlaneGeometry(5, 5, 32);
     var texture = new THREE.TextureLoader().load("crossair.svg")
-    var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true}); 
+    var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     aim = new THREE.Mesh(geometry, material);
     aim.position.z = 15
     aim.rotateY(Math.PI)
@@ -344,7 +401,7 @@ function UpdateGummi() {
     if (movingLeft == true) {
         movingLeft = true
         gummiPivot.position.x -= 0.1
-       // aim.position.x -= 0.1
+        //aim.position.x -= 0.1
         if (gummiPivot.rotation.z > -0.2)
             gummiPivot.rotation.z -= 0.01
         else
@@ -383,34 +440,34 @@ function UpdateGummi() {
     if (moving == false) {
         if (gummiPivot.rotation.z < 0) {
             gummiPivot.rotation.z += 0.01
-            console.log("returning from left")
+            //console.log("returning from left")
         }
 
 
         if (gummiPivot.rotation.z > 0) {
             gummiPivot.rotation.z -= 0.01
-            console.log("returning from right")
+            //console.log("returning from right")
         }
         if (gummiPivot.rotation.z == 0) {
             gummiPivot.rotation.z = 0
-            console.log("neutral z")
+            //console.log("neutral z")
         }
 
 
 
         if (gummiPivot.rotation.x < 0) {
             gummiPivot.rotation.x += 0.01
-            console.log("returning from above")
+            // console.log("returning from above")
         }
 
         if (gummiPivot.rotation.x > 0) {
             gummiPivot.rotation.x -= 0.01
-            console.log("returning from down")
+            //console.log("returning from down")
 
         }
         if (gummiPivot.rotation.x == 0) {
             gummiPivot.rotation.x = 0
-            console.log("neutral x")
+            //console.log("neutral x")
         }
 
     }
@@ -450,7 +507,7 @@ function createWing() {
 
 
 function createSpace() {
-    var geometry = new THREE.SphereGeometry(90, 32, 32);
+    var geometry = new THREE.SphereGeometry(80, 32, 32);
     var texture = new THREE.TextureLoader().load("galaxy_starfield.png")
     var material = new THREE.MeshBasicMaterial({ map: texture });
     material.side = THREE.BackSide
@@ -461,44 +518,99 @@ function createSpace() {
     scene.add(sphere);
 }
 
-
 function createShoot() {
     if (shooting == 1) {
-        if(shootControl == 0){
-            console.log("created")
+        if (shootControl == 0) {
+            // console.log("created")
             var geometry = new THREE.BoxGeometry(0.5, 0.8, 2);
             var material = new THREE.MeshBasicMaterial();
             shot = new THREE.Mesh(geometry, material);
-            /*shot.position.z = gummiPivot.position.z - 1
+
+            //shot.position = gummiPivot.position.clone()
+
+
+            /*
+             shot.position.applyMatrix4(gummiPivot.matrixWorld)
+            let normalMatrix = new THREE.Matrix4().extractRotation(gummiPivot.matrixWorld)
+             let normal = gummiPivot.geometry.faces[8].normal
+             let bulletDirection = normal.clone().applyMatrix4(normalMatrix)*/
+            shot.position.z = gummiPivot.position.z
             shot.position.x = gummiPivot.position.x
             shot.position.y = gummiPivot.position.y
-            shot.rotation.x = gummiPivot.rotation.x
-            shot.rotation.y = gummiPivot.rotation.y
-            shot.rotation.z = gummiPivot.rotation.z*/
+            // bullet.rotation.x = gummiPivot.rotation.x
+            // bullet.rotation.y = gummiPivot.rotation.y
+            // bullet.rotation.z = gummiPivot.rotation.z
+
+            shot.dir = aim.position.clone();
+            // posição plano (em relação ao pivot)
+            shot.dir = shot.dir.clone().applyMatrix4(gummiPivot.matrixWorld); // posição plano em coordenadas mundo
+
+            shot.dir.sub(gummiPivot.position.clone()); // direção = posPlano - posPivot
+
+            shot.dir.multiplyScalar(0.6)
+
+            // calcula direção
+            // var aimW = aim.position.clone();
+
+            /*  shot.dir = aim.position.clone()
+             shot.dir = shot.dir.clone().applyMatrix4(aim.matrixWorld)
+             shot.dir.sub(aim.position.clone())
+ 
+             shot.dir.multiplyScalar(0.2)
+  */
+
+            // console.log(aim.position)
+            //console.log(shot.position, aim.position, aim.matrixWorld, aimW, shot.dir)
+
+            shot.geometry.computeBoundingBox();
+            box = new THREE.Box3().setFromObject(shot);
+
             shots.push(shot)
-            gummiPivot.add(shot)
+            shotBoxes.push(box)
+            scene.add(shot)
             shootControl++
         }
     }
 
 
-    if(shootControl > 0 && shootControl < 5 ){
+    if (shootControl > 0 && shootControl < 5) {
         shootControl++
     }
 
-    if(shootControl == 5){
+    if (shootControl == 5) {
         shootControl = 0
     }
 
     if (shots.length > 0) {
 
+
+
         for (let i = 0; i < shots.length; i++) {
 
-            shots[i].position.z += 3
-            
-            /*if(shots[i].position.y > 0){
-                shots[i].position.y += 1
-            }*/
+
+
+            // shots[i].position.z -= 3
+            var b = shots[i];
+            b.position.addVectors(b.position.clone(), b.dir);
+
+            shotBoxes[i] = new THREE.Box3().setFromObject(b);
+
+            //console.log(shotBoxes[i].intersectsBox(enemyBoxes[0]))
+
+            for (let j = 0; j < enemies.length; j++) {
+                if (shotBoxes[i].intersectsBox(enemyBoxes[j])) {
+
+                    scene.remove(enemies[j])
+                    enemies.splice(j, 1)
+                    enemyBoxes.splice(j, i)
+                    score += 10
+                    scoreText.innerHTML = "Score: " + score;
+                    console.log(score)
+                }
+
+            }
+
+
 
         }
 
@@ -507,14 +619,15 @@ function createShoot() {
                 console.log("delete")
                 //console.log(shot)
                 scene.remove(shots[i])
-                shots.splice(i,1)
+                shots.splice(i, 1)
+                shotBoxes.splice(i, 1)
             }
 
         }
     }
 
 
-    console.log("length: " + shots.length)
+    // console.log("length: " + shots.length)
 
 
 }
@@ -525,7 +638,7 @@ let trails = []
 
 function fire() {
     if (countFramesTrail > 5) {
-        console.log("entrou")
+        // console.log("entrou")
         for (let i = 0; i < 5; i++) {
             //console.log("entra objetos")
             var geometry = new THREE.SphereGeometry(1, 8, 8);
@@ -582,7 +695,11 @@ function animate() {
 
     UpdateGummi()
     createShoot()
+    spawnEnemy()    
     fire()
+
+
+
     //scene.remove(shot)    
     // animate using requestAnimationFrame
     renderer.render(scene, camera);
@@ -590,9 +707,9 @@ function animate() {
 
     sphere.rotateY(0.0005)
     sphere.rotateX(0.0001)
-    levelPivot.position.z += 0.03
-    enemy.position.z += 0.01
+    //levelPivot.position.x += 0.03
+    //enemy.position.z += 0.01
     plateRock.rotation.x += 0.01
-
+    //console.log(camera.rotation)
 
 }
