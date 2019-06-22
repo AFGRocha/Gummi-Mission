@@ -28,13 +28,11 @@ var spawnControl = 1
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
-
     /*********************
  * SCENE 
  * *******************/
     // create an empty scene, that will hold all our elements such as objects, cameras and lights
     scene = new THREE.Scene();
-
 
     /*********************
      * CAMERA 
@@ -44,8 +42,6 @@ window.onload = function init() {
     camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 100);
     camera.position.z = 11.5;
     camera.position.y = 4;
-
-
 
     controls = new THREE.OrbitControls(camera);
     controls.addEventListener('change', function () { renderer.render(scene, camera); });
@@ -70,9 +66,6 @@ window.onload = function init() {
     createGummi()
     createCrossair()
 
-
-
-
     //Score
 
     scoreText = document.createElement('div');
@@ -87,14 +80,13 @@ window.onload = function init() {
     scoreText.className = "khtext"
     document.body.appendChild(scoreText);
 
-
     //Plate Rock
 
-    var geometry = new THREE.BoxGeometry(2, 0.1, 2);
+    /* var geometry = new THREE.BoxGeometry(2, 0.1, 2);
     var material = new THREE.MeshBasicMaterial();
     plateRock = new THREE.Mesh(geometry, material);
 
-    levelPivot.add(plateRock)
+    levelPivot.add(plateRock) */
 
     /*objLoader.load('Untitled_1.obj', (event) => {
         const root = event.detail.loaderRootNode;
@@ -121,10 +113,7 @@ window.onload = function init() {
     animate()
 }
 
-
 function createGummi() {
-
-
 
     var gummiWindowGeometry = new THREE.SphereGeometry(1.2, 30, 30);
     var windowMaterial = new THREE.MeshBasicMaterial({ color: 0x21ADFF });
@@ -132,7 +121,6 @@ function createGummi() {
     gummiWindow.position.set(0, 1.3, 0)
 
     gummiPivot.add(gummiWindow)
-
 
     var cockpitGeometry = new THREE.BoxGeometry(3, 1.5, 3);
     var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
@@ -162,7 +150,6 @@ function createGummi() {
     front3.rotation.x += 1.573
     front3.rotation.y += 1.585
     front3.position.set(0, 0, 5.23)
-
 
     gummiPivot.add(front1);
     gummiPivot.add(front2);
@@ -257,12 +244,9 @@ function createGummi() {
     gunHolder.position.set(0.75, -1.5, 0.75)
     gummiPivot.add(gunHolder);
 
-
-
     gummiPivot.rotation.y += 3.14159
 
     scene.add(gummiPivot)
-
 }
 
 function spawnEnemy() {
@@ -270,12 +254,12 @@ function spawnEnemy() {
     //Loading an obj file
     //const objLoader = new THREE.OBJLoader2();
 
-    if (spawnControl > 0 && spawnControl < 500) {
+    if (spawnControl > 0 && spawnControl < 100) {
         console.log("entrou")
         spawnControl++
     }
 
-    if (spawnControl == 500) {
+    if (spawnControl == 100) {
         spawnControl = 0
     }
 
@@ -292,8 +276,8 @@ function spawnEnemy() {
                     mesh.position.y = 5;
                     mesh.position.x = 0
                     mesh.position.z = - 100
-                    //mesh.rotateY(-Math.PI / 2)
-                    mesh.rotateX(2*Math.PI/18)
+                    mesh.rotateY(Math.PI)
+                    //mesh.rotateX(2*Math.PI/18)
                     mesh.scale.set(0.02, 0.02, 0.02)
                     mesh.name = "enemy"
     
@@ -326,8 +310,19 @@ function spawnEnemy() {
             enemies[i].position.z += 0.1
         }
     }
-}
 
+    for (let i = 0; i < enemies.length; i++) {
+        //e preciso alterar o -5
+        if (enemies[i].position.z > -5) {
+            console.log(enemies[0].position.z)
+            console.log("delete")
+            scene.remove(enemies[i])
+            enemies.splice(i, 1)
+            enemyBoxes.splice(i, i)
+        }
+        
+    }
+}
 
 function createCrossair() {
     var geometry = new THREE.PlaneGeometry(5, 5, 32);
@@ -473,10 +468,6 @@ function UpdateGummi() {
 
 }
 
-
-
-
-
 function createWing() {
     let wingGeometry = new THREE.Geometry()
 
@@ -582,11 +573,7 @@ function createShoot() {
 
     if (shots.length > 0) {
 
-
-
         for (let i = 0; i < shots.length; i++) {
-
-
 
             // shots[i].position.z -= 3
             var b = shots[i];
@@ -609,13 +596,11 @@ function createShoot() {
 
             }
 
-
-
         }
 
         for (let i = 0; i < shots.length; i++) {
             if (shots[i].position.z < -100) {
-                console.log("delete")
+                //console.log("delete")
                 //console.log(shot)
                 scene.remove(shots[i])
                 shots.splice(i, 1)
@@ -625,17 +610,16 @@ function createShoot() {
         }
     }
 
-
     // console.log("length: " + shots.length)
-
 
 }
 
-
 let countFramesTrail = 0
+let countFramesTrail2 = 0
 let trails = []
+let trails2 = []
 
-function fire() {
+function fireLeft() {
     if (countFramesTrail > 5) {
         // console.log("entrou")
         for (let i = 0; i < 5; i++) {
@@ -689,15 +673,67 @@ function fire() {
     countFramesTrail += 1
 }
 
+function fireRight() {
+    if (countFramesTrail2 > 5) {
+        // console.log("entrou")
+        for (let i = 0; i < 5; i++) {
+            //console.log("entra objetos")
+            var geometry = new THREE.SphereGeometry(1, 8, 8);
+            var material = new THREE.MeshBasicMaterial({ color: 0xFFC723 });
+
+            var sphere2 = new THREE.Mesh(geometry, material);
+
+            sphere2.position.x = -0.7
+            sphere2.position.y = -0.7
+            sphere2.position.z = -0.15
+
+            sphere2.scale.set(0.05, 0.05, 0.05)
+
+            let vX2 = Math.random() * 0.01 - 0.005;
+            let vY2 = Math.random() * 0.01 - 0.005;
+
+            gummiPivot.add(sphere2);
+            trails2.push({ sphere2: sphere2, vx2: vX2, vy2: vY2 })
+
+        }
+        countFramesTrail2 = 0
+    }
+
+    trails2.forEach((trail2, i) => {
+
+        trail2.sphere2.position.z -= 0.01
+        trail2.sphere2.scale.x += 0.0008
+        trail2.sphere2.scale.y += 0.0008
+        trail2.sphere2.scale.z += 0.0008
+        if (trail2.sphere2.position.z > -1) {
+            trail2.sphere2.position.x += trail2.vx2
+            trail2.sphere2.position.y += trail2.vy2
+        }
+        if (trail2.sphere2.position.z < -1) {
+            trail2.sphere2.position.x -= trail2.vx2
+            trail2.sphere2.position.y -= trail2.vy2
+        }
+
+        //trail.sphere.material.opacity -= 0.005
+
+        if (trail2.sphere2.position.z < -1.85) {
+
+            gummiPivot.remove(trails2[i].sphere2)
+            trails2.splice(i, 1)
+            i--
+        }
+    });
+
+    countFramesTrail2 += 1
+}
 
 function animate() {
 
     UpdateGummi()
     createShoot()
     spawnEnemy()    
-    fire()
-
-
+    fireLeft()
+    fireRight()
 
     //scene.remove(shot)    
     // animate using requestAnimationFrame
@@ -708,7 +744,8 @@ function animate() {
     sphere.rotateX(0.0001)
     //levelPivot.position.x += 0.03
     //enemy.position.z += 0.01
-    plateRock.rotation.x += 0.01
+    //plateRock.rotation.x += 0.01
     //console.log(camera.rotation)
 
 }
+
