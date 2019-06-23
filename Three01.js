@@ -25,6 +25,8 @@ var enemies = []
 var score = 0
 var scoreText;
 var spawnControl = 1
+var gummiBox;
+var hurtbox;
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
@@ -108,7 +110,7 @@ window.onload = function init() {
     directionalLight.castShadow = true;
     scene.add(directionalLight);
 
-    
+
     scene.add(levelPivot)
     animate()
 }
@@ -244,18 +246,37 @@ function createGummi() {
     gunHolder.position.set(0.75, -1.5, 0.75)
     gummiPivot.add(gunHolder);
 
+
+
+    
+    //hurtbox
+
+    var geometry = new THREE.BoxGeometry(6, 4.5,7.5);
+    var material = new THREE.MeshBasicMaterial({ color: 0xffffff , transparent: true , opacity: 0});
+    hurtbox = new THREE.Mesh(geometry, material);
+    hurtbox.position.set(0, 0,2.3)
+
+    gummiPivot.add(hurtbox)
+
+
     gummiPivot.rotation.y += 3.14159
+    gummiBox = new THREE.Box3().setFromObject(hurtbox);
+    console.log(gummiBox)
 
     scene.add(gummiPivot)
+
+
+
+
 }
 
 function spawnEnemy() {
-    
+
     //Loading an obj file
     //const objLoader = new THREE.OBJLoader2();
 
     if (spawnControl > 0 && spawnControl < 100) {
-        console.log("entrou")
+        //console.log("entrou")
         spawnControl++
     }
 
@@ -263,65 +284,71 @@ function spawnEnemy() {
         spawnControl = 0
     }
 
-    
-    if (spawnControl == 0) {
-            const mtlLoader = new THREE.MTLLoader();
-    
-            mtlLoader.load('Untitled_2.mtl', function (materials) {
-                materials.preload(); // load a material’s resource
-                var objLoader = new THREE.OBJLoader();
-                objLoader.setMaterials(materials);
-                objLoader.load('Untitled_2.obj', function (object) {// load a geometry resource
-                    mesh = object;
-                    mesh.position.y = 5;
-                    mesh.position.x = 0
-                    mesh.position.z = - 100
-                    mesh.rotateY(Math.PI)
-                    //mesh.rotateX(2*Math.PI/18)
-                    mesh.scale.set(0.02, 0.02, 0.02)
-                    mesh.name = "enemy"
-    
-                    mesh.traverse(function (child) {
-                        if (child instanceof THREE.Mesh) {
-    
-                            // apply custom material
-                            child.material.side = THREE.DoubleSide;
-    
-                        }
-                    });
-    
-                    box2 = new THREE.Box3().setFromObject(mesh);
-    
-                    //enemy.add(mesh)
-                    enemies.push(mesh)
-                    enemyBoxes.push(box2)
-                    scene.add(mesh)
-                    //levelPivot.add(enemy);
 
+    if (spawnControl == 0) {
+        const mtlLoader = new THREE.MTLLoader();
+
+        mtlLoader.load('Untitled_2.mtl', function (materials) {
+            materials.preload(); // load a material’s resource
+            var objLoader = new THREE.OBJLoader();
+            objLoader.setMaterials(materials);
+            objLoader.load('Untitled_2.obj', function (object) {// load a geometry resource
+                mesh = object;
+                mesh.position.y = 5;
+                mesh.position.x = 0
+                mesh.position.z = - 100
+                mesh.rotateY(Math.PI)
+                //mesh.rotateX(2*Math.PI/18)
+                mesh.scale.set(0.02, 0.02, 0.02)
+                mesh.name = "enemy"
+
+                mesh.traverse(function (child) {
+                    if (child instanceof THREE.Mesh) {
+
+                        // apply custom material
+                        child.material.side = THREE.DoubleSide;
+
+                    }
                 });
+
+                box2 = new THREE.Box3().setFromObject(mesh);
+
+                //enemy.add(mesh)
+                enemies.push(mesh)
+                enemyBoxes.push(box2)
+                scene.add(mesh)
+                //levelPivot.add(enemy);
+
             });
-            spawnControl = 1
-        
+        });
+        spawnControl = 1
+
     }
     //update
 
-    if(enemies.length > 0){
-        for(let i = 0; i < enemies.length; i++){
+    if (enemies.length > 0) {
+        for (let i = 0; i < enemies.length; i++) {
             enemies[i].position.z += 0.1
         }
     }
 
     for (let i = 0; i < enemies.length; i++) {
         //e preciso alterar o -5
-        if (enemies[i].position.z > -5) {
+        if (enemies[i].position.z > 10) {
             console.log(enemies[0].position.z)
             console.log("delete")
             scene.remove(enemies[i])
             enemies.splice(i, 1)
             enemyBoxes.splice(i, i)
         }
-        
+
     }
+
+    for (let i = 0; i < enemies.length; i++) {
+        enemyBoxes[i] = new THREE.Box3().setFromObject(enemies[i]);
+
+    }
+
 }
 
 function createCrossair() {
@@ -462,6 +489,25 @@ function UpdateGummi() {
         if (gummiPivot.rotation.x == 0) {
             gummiPivot.rotation.x = 0
             //console.log("neutral x")
+        }
+
+    }
+
+    //updating boundingbox
+    gummiBox = new THREE.Box3().setFromObject(hurtbox);
+    // console.log(gummiBox.applyMatrix4)
+
+
+    //colisions
+    for (let j = 0; j < enemies.length; j++) {
+
+
+        //console.log("entrou no for")
+
+        if (gummiBox.intersectsBox(enemyBoxes[j])) {
+
+            console.log("bateu pah")
+
         }
 
     }
@@ -731,9 +777,12 @@ function animate() {
 
     UpdateGummi()
     createShoot()
-    spawnEnemy()    
+    spawnEnemy()
     fireLeft()
     fireRight()
+
+
+
 
     //scene.remove(shot)    
     // animate using requestAnimationFrame
