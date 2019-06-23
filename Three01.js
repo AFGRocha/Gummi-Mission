@@ -55,7 +55,7 @@ window.onload = function init() {
     camera.position.y = 4;
 
     controls = new THREE.OrbitControls(camera);
-    controls.addEventListener('change', function () { renderer.render(scene, camera); });
+    controls.addEventListener('change', function () { renderer.render(scene, camera); }); 
     /*********************
      * RENDERER 
      * *******************/
@@ -99,8 +99,8 @@ window.onload = function init() {
     text.style.height = 100;
     text.style.color = "white";
     text.innerHTML = "Press 1 to change space texture";
-    text.style.top = 650 + 'px';
-    text.style.left = 50 + 'px';
+    text.style.top = 10 + 'px';
+    text.style.left = 650 + 'px';
     text.className = "khtext"
     document.body.appendChild(text);
 
