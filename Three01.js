@@ -151,14 +151,14 @@ window.onload = function init() {
 function createGummi() {
 
     var gummiWindowGeometry = new THREE.SphereGeometry(1.2, 30, 30);
-    var windowMaterial = new THREE.MeshBasicMaterial({ color: 0x21ADFF });
+    var windowMaterial = new THREE.MeshLambertMaterial({ color: 0x21ADFF });
     var gummiWindow = new THREE.Mesh(gummiWindowGeometry, windowMaterial);
     gummiWindow.position.set(0, 1.3, 0)
 
     gummiPivot.add(gummiWindow)
 
     var cockpitGeometry = new THREE.BoxGeometry(3, 1.5, 3);
-    var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
+    var material = new THREE.MeshLambertMaterial({ color: 0xaf0e0e });
     var gummiCockpit = new THREE.Mesh(cockpitGeometry, material);
     gummiPivot.add(gummiCockpit);
     gummiCockpit.position.set(0, 0.65, 0)
@@ -169,18 +169,18 @@ function createGummi() {
 
     //#
     var front1Geometry = new THREE.BoxGeometry(2, 2, 1.3);
-    var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
+    var material = new THREE.MeshLambertMaterial({ color: 0xaf0e0e });
     var front1 = new THREE.Mesh(front1Geometry, material);
     front1.position.set(0, 0, 2.15)
     front1.rotation.z += 0.8
 
     var front2Geometry = new THREE.BoxGeometry(2, 2, 1.3);
-    var material = new THREE.MeshBasicMaterial({ color: 0xffe900 });
+    var material = new THREE.MeshLambertMaterial({ color: 0xffe900 });
     var front2 = new THREE.Mesh(front2Geometry, material);
     front2.position.set(0, 0, 3.44)
     front2.rotation.z += 0.8
     var front3Geometry = new THREE.ConeGeometry(1.4, 2.3, 4);
-    var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
+    var material = new THREE.MeshLambertMaterial({ color: 0xaf0e0e });
     var front3 = new THREE.Mesh(front3Geometry, material);
     front3.rotation.x += 1.573
     front3.rotation.y += 1.585
@@ -192,7 +192,7 @@ function createGummi() {
 
     //Wings
     var wingboxGeometry = new THREE.BoxGeometry(1.2, 1, 1.5);
-    var material = new THREE.MeshBasicMaterial({ color: 0xDD8D01 });
+    var material = new THREE.MeshLambertMaterial({ color: 0xDD8D01 });
     var wingbox1 = new THREE.Mesh(wingboxGeometry, material);
     var wingbox2 = new THREE.Mesh(wingboxGeometry, material);
     wingbox1.position.set(2.1, -0.5, -0.75)
@@ -201,7 +201,7 @@ function createGummi() {
     gummiPivot.add(wingbox2);
 
     var wingGeometry = createWing()
-    var material = new THREE.MeshBasicMaterial({ color: 0xe5e5e5, side: THREE.DoubleSide });
+    var material = new THREE.MeshLambertMaterial({ color: 0xe5e5e5, side: THREE.DoubleSide });
     var wing1 = new THREE.Mesh(wingGeometry, material);
     var wing2 = new THREE.Mesh(wingGeometry, material);
     var wing3 = new THREE.Mesh(wingGeometry, material);
@@ -221,7 +221,7 @@ function createGummi() {
 
     //yellow cylinders
     var cylinderGeometry = new THREE.CylinderGeometry(0.55, 0.55, 2.5, 32);
-    var material = new THREE.MeshBasicMaterial({ color: 0xffe900 });
+    var material = new THREE.MeshLambertMaterial({ color: 0xffe900 });
     var cylinder1 = new THREE.Mesh(cylinderGeometry, material);
     cylinder1.position.set(2.05, -0.5, 1.25)
     cylinder1.rotateX(-Math.PI / 2)
@@ -233,7 +233,7 @@ function createGummi() {
 
     //red spheres
     var sphereGeometry = new THREE.SphereGeometry(0.55, 32, 32, 0, 6.3, 0, 1.6);
-    var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
+    var material = new THREE.MeshLambertMaterial({ color: 0xaf0e0e });
     var sphere1 = new THREE.Mesh(sphereGeometry, material);
     sphere1.position.set(2.05, -0.5, 2.51)
     sphere1.rotateX(Math.PI / 2)
@@ -245,7 +245,7 @@ function createGummi() {
 
     //big red cylinder
 
-    var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
+    var material = new THREE.MeshLambertMaterial({ color: 0xaf0e0e });
     var cylinder3 = new THREE.Mesh(cylinderGeometry, material);
     cylinder3.position.set(-0.7, -1.5, 1.25)
     cylinder3.rotateX(-Math.PI / 2)
@@ -262,7 +262,7 @@ function createGummi() {
 
     //Thrusters
     var thrusterGeometry = new THREE.CylinderGeometry(0.55, 0.10, 1, 32);
-    var material = new THREE.MeshBasicMaterial({ color: 0x696969 });
+    var material = new THREE.MeshLambertMaterial({ color: 0x696969 });
     var thruster1 = new THREE.Mesh(thrusterGeometry, material);
     var thruster2 = new THREE.Mesh(thrusterGeometry, material);
     thruster1.position.set(-0.7, -0.65, -0.015)
@@ -274,7 +274,7 @@ function createGummi() {
 
     //Under side Guns
     var holderGeometry = new THREE.BoxGeometry(1.5, 1, 1.5);
-    var material = new THREE.MeshBasicMaterial({ color: 0xaf0e0e });
+    var material = new THREE.MeshLambertMaterial({ color: 0xaf0e0e });
     var gunHolder = new THREE.Mesh(holderGeometry, material);
     gunHolder.position.set(0.75, -1.5, 0.75)
     gummiPivot.add(gunHolder);
@@ -875,7 +875,8 @@ function updateHP() {
             var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             hp = new THREE.Mesh(geometry, material);
             hp.position.x = 15
-            hp.position.y = -5
+            hp.position.y = -7
+            hp.position.z = 2
             hp.rotateX(-0.2)
             scene.add(hp)
             break;
@@ -885,7 +886,8 @@ function updateHP() {
             var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             hp = new THREE.Mesh(geometry, material);
             hp.position.x = 15
-            hp.position.y = -5
+            hp.position.y = -7
+            hp.position.z = 2
             hp.rotateX(-0.2)
             scene.add(hp)
             break;
