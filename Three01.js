@@ -116,7 +116,7 @@ window.onload = function init() {
     var texture = new THREE.TextureLoader().load("HP_BAR_Full.png")
     var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     hp = new THREE.Mesh(geometry, material);
-    
+
     scene.add(hp)
     hp.position.x = 15
     hp.position.y = -8
@@ -305,8 +305,8 @@ function spawnEnemy() {
             objLoader.setMaterials(materials);
             objLoader.load('Untitled_2.obj', function (object) {// load a geometry resource
                 mesh = object;
-                mesh.position.y = 5;
-                mesh.position.x = 0
+                mesh.position.y = 20 - Math.floor((Math.random() * 40) + 1)
+                mesh.position.x = 10 - Math.floor((Math.random() * 20) + 1)
                 mesh.position.z = - 100
                 mesh.rotateY(Math.PI)
                 //mesh.rotateX(2*Math.PI/18)
@@ -522,7 +522,7 @@ function UpdateGummi() {
             enemies.splice(j, 1)
             enemyBoxes.splice(j, 1)
             life--
-            
+
 
             updateHP()
 
@@ -804,10 +804,12 @@ function animate() {
 
 
 
-    //scene.remove(shot)    
-    // animate using requestAnimationFrame
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
+    if (life != 0) {
+        // animate using requestAnimationFrame
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+    }
+
 
     sphere.rotateY(0.0005)
     sphere.rotateX(0.0001)
@@ -845,6 +847,14 @@ function updateHP() {
             hp.position.y = -5
             hp.rotateX(-0.2)
             scene.add(hp)
+            break;
+        case 0:
+            var geometry = new THREE.PlaneGeometry(40, 35, 32);
+            var texture = new THREE.TextureLoader().load("gameover.png")
+            var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+            var over = new THREE.Mesh(geometry, material);
+            over.position.z = 2.1
+            scene.add(over)
             break;
         default:
             break;
