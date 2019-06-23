@@ -27,6 +27,8 @@ var scoreText;
 var spawnControl = 1
 var gummiBox;
 var hurtbox;
+var life = 3
+var hp;
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
@@ -110,6 +112,14 @@ window.onload = function init() {
     directionalLight.castShadow = true;
     scene.add(directionalLight);
 
+    var geometry = new THREE.PlaneGeometry(5, 5, 32);
+    var texture = new THREE.TextureLoader().load("HP_BAR_Full.png")
+    var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    hp = new THREE.Mesh(geometry, material);
+    hp.position.x = -15
+    hp.position.y = -5
+    hp.rotateX(-0.2)
+    scene.add(hp)
 
     scene.add(levelPivot)
     animate()
@@ -248,13 +258,13 @@ function createGummi() {
 
 
 
-    
+
     //hurtbox
 
-    var geometry = new THREE.BoxGeometry(6, 4.5,7.5);
-    var material = new THREE.MeshBasicMaterial({ color: 0xffffff , transparent: true , opacity: 0});
+    var geometry = new THREE.BoxGeometry(6, 4.5, 7.5);
+    var material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
     hurtbox = new THREE.Mesh(geometry, material);
-    hurtbox.position.set(0, 0,2.3)
+    hurtbox.position.set(0, 0, 2.3)
 
     gummiPivot.add(hurtbox)
 
@@ -507,6 +517,9 @@ function UpdateGummi() {
         if (gummiBox.intersectsBox(enemyBoxes[j])) {
 
             console.log("bateu pah")
+            life--
+
+            updateHP()
 
         }
 
@@ -784,6 +797,8 @@ function animate() {
 
 
 
+
+
     //scene.remove(shot)    
     // animate using requestAnimationFrame
     renderer.render(scene, camera);
@@ -798,3 +813,36 @@ function animate() {
 
 }
 
+
+function updateHP() {
+
+    scene.remove(hp)
+
+    switch (life) {
+        case 3:
+            break;
+        case 2:
+            var geometry = new THREE.PlaneGeometry(5, 5, 32);
+            var texture = new THREE.TextureLoader().load("HP_BAR_2_Lifes.png")
+            var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+            hp = new THREE.Mesh(geometry, material);
+            hp.position.x = -15
+            hp.position.y = -5
+            hp.rotateX(-0.2)
+            scene.add(hp)
+            break;
+        case 1:
+            var geometry = new THREE.PlaneGeometry(5, 5, 32);
+            var texture = new THREE.TextureLoader().load("HP_BAR_1_Lifes.png")
+            var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+            hp = new THREE.Mesh(geometry, material);
+            hp.position.x = -15
+            hp.position.y = -5
+            hp.rotateX(-0.2)
+            scene.add(hp)
+            break;
+        default:
+            break;
+    }
+
+}
