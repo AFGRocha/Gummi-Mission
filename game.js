@@ -130,7 +130,6 @@ window.onload = function init() {
     hp.position.y = -7
     hp.position.z = 2
     hp.rotateX(-0.2)
-    console.log(window.innerWidth)
     scene.add(levelPivot)
     animate()
 }
@@ -281,7 +280,6 @@ function createGummi() {
 
     gummiPivot.rotation.y += 3.14159
     gummiBox = new THREE.Box3().setFromObject(hurtbox);
-    console.log(gummiBox)
 
     scene.add(gummiPivot)
 
@@ -296,7 +294,7 @@ function spawnEnemy() {
     //const objLoader = new THREE.OBJLoader2();
 
     if (spawnControl > 0 && spawnControl < 100) {
-        //console.log("entrou")
+
         spawnControl++
     }
 
@@ -356,8 +354,6 @@ function spawnEnemy() {
 
     for (let i = 0; i < enemies.length; i++) {
         if (enemies[i].position.z > 10) {
-            console.log(enemies[0].position.z)
-            console.log("delete")
             scene.remove(enemies[i])
             enemies.splice(i, 1)
             enemyBoxes.splice(i, i)
@@ -392,7 +388,6 @@ function handleKeyDown(event) {
     var char = String.fromCharCode(event.keyCode);
     switch (char) {
         case "1":
-            console.log("entrou")
             texControl = -texControl
             changeTex()
             break;
@@ -529,7 +524,6 @@ function UpdateGummi() {
 
         if (gummiBox.intersectsBox(enemyBoxes[j])) {
 
-            console.log("bateu pah")
             scene.remove(enemies[j])
             enemies.splice(j, 1)
             enemyBoxes.splice(j, 1)
@@ -647,7 +641,6 @@ function createShoot() {
                     enemyBoxes.splice(j, 1)
                     score += 10
                     scoreText.innerHTML = "Score: " + score;
-                    console.log(score)
                     destroyed = true
                     destroyCounter = 0
                 }
@@ -804,10 +797,6 @@ function animate() {
 
     sphere.rotateY(0.0005)
     sphere.rotateX(0.0001)
-    //levelPivot.position.x += 0.03
-    //enemy.position.z += 0.01
-    //plateRock.rotation.x += 0.01
-    //console.log(camera.rotation)
     // animate using requestAnimationFrame
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
@@ -878,7 +867,6 @@ let destroyCounter = 0;
 
 function destroy(x, y, z) {
     if (destroyCounter < 100) {
-        console.log("countframetrails:" + countFramesTrail3)
         if (countFramesTrail3 > 5) {
 
             for (let i = 0; i < 5; i++) {
