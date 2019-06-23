@@ -29,6 +29,7 @@ var gummiBox;
 var hurtbox;
 var life = 3
 var hp;
+var enemySpeed = 0.1
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
@@ -293,6 +294,9 @@ function spawnEnemy() {
 
     if (spawnControl == 100) {
         spawnControl = 0
+
+        if (enemySpeed < 0.7)
+            enemySpeed += 0.01
     }
 
 
@@ -339,7 +343,7 @@ function spawnEnemy() {
 
     if (enemies.length > 0) {
         for (let i = 0; i < enemies.length; i++) {
-            enemies[i].position.z += 0.1
+            enemies[i].position.z += enemySpeed
         }
     }
 
@@ -652,7 +656,7 @@ function createShoot() {
 
                     scene.remove(enemies[j])
                     enemies.splice(j, 1)
-                    enemyBoxes.splice(j, i)
+                    enemyBoxes.splice(j, 1)
                     score += 10
                     scoreText.innerHTML = "Score: " + score;
                     console.log(score)
@@ -793,21 +797,17 @@ function fireRight() {
 
 function animate() {
 
-    UpdateGummi()
-    createShoot()
-    spawnEnemy()
-    fireLeft()
-    fireRight()
-
-
+   
 
 
 
 
     if (life != 0) {
-        // animate using requestAnimationFrame
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
+        UpdateGummi()
+        createShoot()
+        spawnEnemy()
+        fireLeft()
+        fireRight()
     }
 
 
@@ -817,6 +817,9 @@ function animate() {
     //enemy.position.z += 0.01
     //plateRock.rotation.x += 0.01
     //console.log(camera.rotation)
+    // animate using requestAnimationFrame
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
 
 }
 
