@@ -116,11 +116,12 @@ window.onload = function init() {
     var texture = new THREE.TextureLoader().load("HP_BAR_Full.png")
     var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
     hp = new THREE.Mesh(geometry, material);
-    hp.position.x = -15
-    hp.position.y = -5
-    hp.rotateX(-0.2)
+    
     scene.add(hp)
-
+    hp.position.x = 15
+    hp.position.y = -8
+    hp.rotateX(-0.2)
+    console.log(window.innerWidth)
     scene.add(levelPivot)
     animate()
 }
@@ -830,7 +831,7 @@ function updateHP() {
             var texture = new THREE.TextureLoader().load("HP_BAR_2_Lifes.png")
             var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             hp = new THREE.Mesh(geometry, material);
-            hp.position.x = -15
+            hp.position.x = 15
             hp.position.y = -5
             hp.rotateX(-0.2)
             scene.add(hp)
@@ -840,7 +841,7 @@ function updateHP() {
             var texture = new THREE.TextureLoader().load("HP_BAR_1_Life.png")
             var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             hp = new THREE.Mesh(geometry, material);
-            hp.position.x = -15
+            hp.position.x = 15
             hp.position.y = -5
             hp.rotateX(-0.2)
             scene.add(hp)
@@ -850,3 +851,12 @@ function updateHP() {
     }
 
 }
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight)
+
+}
+
+window.addEventListener("resize", onWindowResize, false)
