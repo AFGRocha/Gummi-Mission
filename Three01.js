@@ -517,7 +517,11 @@ function UpdateGummi() {
         if (gummiBox.intersectsBox(enemyBoxes[j])) {
 
             console.log("bateu pah")
+            scene.remove(enemies[j])
+            enemies.splice(j, 1)
+            enemyBoxes.splice(j, 1)
             life--
+            
 
             updateHP()
 
@@ -833,7 +837,7 @@ function updateHP() {
             break;
         case 1:
             var geometry = new THREE.PlaneGeometry(5, 5, 32);
-            var texture = new THREE.TextureLoader().load("HP_BAR_1_Lifes.png")
+            var texture = new THREE.TextureLoader().load("HP_BAR_1_Life.png")
             var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             hp = new THREE.Mesh(geometry, material);
             hp.position.x = -15
