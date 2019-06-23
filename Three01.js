@@ -30,6 +30,12 @@ var hurtbox;
 var life = 3
 var hp;
 var enemySpeed = 0.1
+var sphere2;
+var destroyed = false
+var dX
+var dY
+var dZ
+var texControl = 1
 
 // once everything is loaded, we run our Three.js stuff
 window.onload = function init() {
@@ -75,7 +81,6 @@ window.onload = function init() {
 
     scoreText = document.createElement('div');
     scoreText.style.position = 'absolute';
-    //scoreText.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
     scoreText.style.width = 100;
     scoreText.style.height = 100;
     scoreText.style.color = "white";
@@ -84,6 +89,21 @@ window.onload = function init() {
     scoreText.style.left = 50 + 'px';
     scoreText.className = "khtext"
     document.body.appendChild(scoreText);
+
+
+    //change texture
+
+    var text = document.createElement('div');
+    text.style.position = 'absolute';
+    text.style.width = 100;
+    text.style.height = 100;
+    text.style.color = "white";
+    text.innerHTML = "Press 1 to change space texture";
+    text.style.top = 650 + 'px';
+    text.style.left = 50 + 'px';
+    text.className = "khtext"
+    document.body.appendChild(text);
+
 
     //Plate Rock
 
@@ -120,7 +140,8 @@ window.onload = function init() {
 
     scene.add(hp)
     hp.position.x = 15
-    hp.position.y = -8
+    hp.position.y = -7
+    hp.position.z = 2
     hp.rotateX(-0.2)
     console.log(window.innerWidth)
     scene.add(levelPivot)
@@ -263,10 +284,10 @@ function createGummi() {
 
     //hurtbox
 
-    var geometry = new THREE.BoxGeometry(6, 4.5, 7.5);
+    var geometry = new THREE.BoxGeometry(6, 4.5, 6);
     var material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
     hurtbox = new THREE.Mesh(geometry, material);
-    hurtbox.position.set(0, 0, 2.3)
+    hurtbox.position.set(0, 0, 2.5)
 
     gummiPivot.add(hurtbox)
 
@@ -355,6 +376,11 @@ function spawnEnemy() {
             scene.remove(enemies[i])
             enemies.splice(i, 1)
             enemyBoxes.splice(i, i)
+            if (score > 0) {
+                score -= 2
+            }
+
+            scoreText.innerHTML = "Score: " + score;
         }
 
     }
@@ -381,7 +407,9 @@ function handleKeyDown(event) {
     var char = String.fromCharCode(event.keyCode);
     switch (char) {
         case "1":
-            camera.position.z += 0.1
+            console.log("entrou")
+            texControl = -texControl
+            changeTex()
             break;
         case "A":
             moving = true
@@ -566,14 +594,13 @@ function createWing() {
 
 function createSpace() {
     var geometry = new THREE.SphereGeometry(80, 32, 32);
-    var texture = new THREE.TextureLoader().load("galaxy_starfield.png")
+    var texture = new THREE.TextureLoader().load("teste.png")
     var material = new THREE.MeshBasicMaterial({ map: texture });
     material.side = THREE.BackSide
 
     sphere = new THREE.Mesh(geometry, material);
-
-
     scene.add(sphere);
+    scene.add(sphere2);
 }
 
 function createShoot() {
@@ -654,12 +681,17 @@ function createShoot() {
             for (let j = 0; j < enemies.length; j++) {
                 if (shotBoxes[i].intersectsBox(enemyBoxes[j])) {
 
+                    dX = enemies[j].position.x
+                    dY = enemies[j].position.y
+                    dZ = enemies[j].position.z
                     scene.remove(enemies[j])
                     enemies.splice(j, 1)
                     enemyBoxes.splice(j, 1)
                     score += 10
                     scoreText.innerHTML = "Score: " + score;
                     console.log(score)
+                    destroyed = true
+                    destroyCounter = 0
                 }
 
             }
@@ -684,8 +716,10 @@ function createShoot() {
 
 let countFramesTrail = 0
 let countFramesTrail2 = 0
+let countFramesTrail3 = 0
 let trails = []
 let trails2 = []
+let trails3 = []
 
 function fireLeft() {
     if (countFramesTrail > 5) {
@@ -797,7 +831,11 @@ function fireRight() {
 
 function animate() {
 
-   
+
+    if (destroyed == true) {
+        destroy(dX, dY, dZ)
+    }
+
 
 
 
@@ -852,12 +890,13 @@ function updateHP() {
             scene.add(hp)
             break;
         case 0:
-            var geometry = new THREE.PlaneGeometry(40, 35, 32);
+            var geometry = new THREE.PlaneGeometry(20, 15, 32);
             var texture = new THREE.TextureLoader().load("gameover.png")
             var material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
             var over = new THREE.Mesh(geometry, material);
-            over.position.z = 2.1
             scene.add(over)
+            scene.remove(gummiPivot)
+            scene.remove(sphere)
             break;
         default:
             break;
@@ -872,4 +911,79 @@ function onWindowResize() {
 
 }
 
+
+
+
+
 window.addEventListener("resize", onWindowResize, false)
+
+
+let destroyCounter = 0;
+
+function destroy(x, y, z) {
+    if (destroyCounter < 100) {
+        console.log("countframetrails:" + countFramesTrail3)
+        if (countFramesTrail3 > 5) {
+
+            // console.log("entrou")
+            for (let i = 0; i < 5; i++) {
+                //console.log("entra objetos")
+                var geometry = new THREE.SphereGeometry(1, 8, 8);
+                var material = new THREE.MeshBasicMaterial({ color: 0xFFC723 });
+
+                var sphere1 = new THREE.Mesh(geometry, material);
+
+                sphere1.position.x = x
+                sphere1.position.y = y
+                sphere1.position.z = z
+
+
+                scene.add(sphere1)
+                sphere1.scale.set(0.2, 0.2, 0.2)
+
+                let vX = Math.random() * (0.1 - -0.1) + -0.1
+                let vY = Math.random() * (0.1 - -0.1) + -0.1
+                let vZ = Math.random() * (0.1 - -0.1) + -0.1
+
+                trails3.push({ sphere: sphere1, vx: vX, vy: vY, vz: vZ })
+
+            }
+            countFramesTrail3 = 0
+        }
+
+        trails3.forEach((trail, i) => {
+
+            trail.sphere.position.z += trail.vz
+            trail.sphere.position.x += trail.vx
+            trail.sphere.position.y += trail.vy
+
+            /*  if (trail.sphere.position.x < -1.85 || trail.sphere.position.x > 1.85 || trail.sphere.position.y < -1.85 || trail.sphere.position.y > 1.85 || trail.sphere.position.z < -1.85 || trail.sphere.position.z> 1.85 ) {
+     
+                 scene.remove(trails3[i].sphere)
+                 trails3.splice(i, 1)
+                 
+                 i--
+             } */
+        });
+
+        countFramesTrail3 += 1
+        destroyCounter++
+    }
+
+    else {
+        trails3.forEach((trail, i) => {
+            scene.remove(trails3[i].sphere)
+            trails3.splice(i, 1)
+        });
+
+        //destroyed = false
+    }
+}
+
+function changeTex(){
+    if(texControl == -1)
+    sphere.material.map = new THREE.TextureLoader().load("galaxy_starfield.png")
+
+    if(texControl == 1)
+    sphere.material.map = new THREE.TextureLoader().load("teste.png")
+}
