@@ -132,6 +132,7 @@ window.onload = function init() {
     hp.rotateX(-0.2)
     scene.add(levelPivot)
     animate()
+    document.getElementById("bgm").play()
 }
 
 function createGummi() {
