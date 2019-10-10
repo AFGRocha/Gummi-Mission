@@ -91,7 +91,6 @@ window.onload = function init() {
     scoreText.className = "khtext"
     document.body.appendChild(scoreText);
 
-
     //change texture
 
     text = document.createElement('div');
@@ -104,7 +103,6 @@ window.onload = function init() {
     text.style.left = 650 + 'px';
     text.className = "khtext"
     document.body.appendChild(text);
-
 
     var hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9);
     scene.add(hemisphereLight);
@@ -266,9 +264,6 @@ function createGummi() {
     gunHolder.position.set(0.75, -1.5, 0.75)
     gummiPivot.add(gunHolder);
 
-
-
-
     //hurtbox
 
     var geometry = new THREE.BoxGeometry(6, 4.5, 6);
@@ -278,21 +273,13 @@ function createGummi() {
 
     gummiPivot.add(hurtbox)
 
-
     gummiPivot.rotation.y += 3.14159
     gummiBox = new THREE.Box3().setFromObject(hurtbox);
 
     scene.add(gummiPivot)
-
-
-
-
 }
 
 function spawnEnemy() {
-
-    //Loading an obj file
-    //const objLoader = new THREE.OBJLoader2();
 
     if (spawnControl > 0 && spawnControl < 100) {
 
@@ -305,7 +292,6 @@ function spawnEnemy() {
         if (enemySpeed < 0.7)
             enemySpeed += 0.01
     }
-
 
     if (spawnControl == 0) {
         const mtlLoader = new THREE.MTLLoader();
@@ -326,10 +312,8 @@ function spawnEnemy() {
 
                 mesh.traverse(function (child) {
                     if (child instanceof THREE.Mesh) {
-
                         // apply custom material
                         child.material.side = THREE.DoubleSide;
-
                     }
                 });
 
@@ -339,7 +323,6 @@ function spawnEnemy() {
                 enemyBoxes.push(box2)
                 scene.add(mesh)
                 
-
             });
         });
         spawnControl = 1
@@ -364,12 +347,10 @@ function spawnEnemy() {
 
             scoreText.innerHTML = "Score: " + score;
         }
-
     }
 
     for (let i = 0; i < enemies.length; i++) {
         enemyBoxes[i] = new THREE.Box3().setFromObject(enemies[i]);
-
     }
 
 }
@@ -458,7 +439,6 @@ function UpdateGummi() {
             gummiPivot.rotation.z += 0.01
         else
             gummiPivot.rotation.z = 0.2
-
     }
 
     if (movingUp == true) {
@@ -477,66 +457,45 @@ function UpdateGummi() {
             gummiPivot.rotation.x = -0.6
     }
 
-
     if (moving == false) {
         if (gummiPivot.rotation.z < 0) {
             gummiPivot.rotation.z += 0.01
-           
         }
-
 
         if (gummiPivot.rotation.z > 0) {
             gummiPivot.rotation.z -= 0.01
-            
         }
+
         if (gummiPivot.rotation.z == 0) {
             gummiPivot.rotation.z = 0
         }
 
-
-
         if (gummiPivot.rotation.x < 0) {
             gummiPivot.rotation.x += 0.01
-         
         }
 
         if (gummiPivot.rotation.x > 0) {
             gummiPivot.rotation.x -= 0.01
-        
-
         }
+
         if (gummiPivot.rotation.x == 0) {
             gummiPivot.rotation.x = 0
-           
         }
-
     }
 
     //updating boundingbox
     gummiBox = new THREE.Box3().setFromObject(hurtbox);
 
-
-
     //colisions
     for (let j = 0; j < enemies.length; j++) {
-
-
- 
-
         if (gummiBox.intersectsBox(enemyBoxes[j])) {
-
             scene.remove(enemies[j])
             enemies.splice(j, 1)
             enemyBoxes.splice(j, 1)
             life--
-
-
             updateHP()
-
         }
-
     }
-
 }
 
 function createWing() {
@@ -549,7 +508,6 @@ function createWing() {
     wingGeometry.vertices.push(new THREE.Vector3(0.2, 0, 0)) //3
     wingGeometry.vertices.push(new THREE.Vector3(0.2, 0, -1.5)) //4
     wingGeometry.vertices.push(new THREE.Vector3(0.2, 1, -1.5)) //5
-
 
     //Wing faces
     wingGeometry.faces.push(new THREE.Face3(0, 1, 2)) //0
@@ -586,11 +544,9 @@ function createShoot() {
             var material = new THREE.MeshBasicMaterial();
             shot = new THREE.Mesh(geometry, material);
 
-
             shot.position.z = gummiPivot.position.z
             shot.position.x = gummiPivot.position.x
             shot.position.y = gummiPivot.position.y
-    
 
             shot.dir = aim.position.clone();
             // posição plano (em relação ao pivot)
@@ -599,8 +555,6 @@ function createShoot() {
             shot.dir.sub(gummiPivot.position.clone()); // direção = posPlano - posPivot
 
             shot.dir.multiplyScalar(0.6)
-
-
 
             shot.geometry.computeBoundingBox();
             box = new THREE.Box3().setFromObject(shot);
@@ -611,7 +565,6 @@ function createShoot() {
             shootControl++
         }
     }
-
 
     if (shootControl > 0 && shootControl < 5) {
         shootControl++
@@ -629,8 +582,6 @@ function createShoot() {
 
             shotBoxes[i] = new THREE.Box3().setFromObject(b);
 
-    
-
             for (let j = 0; j < enemies.length; j++) {
                 if (shotBoxes[i].intersectsBox(enemyBoxes[j])) {
 
@@ -645,9 +596,7 @@ function createShoot() {
                     destroyed = true
                     destroyCounter = 0
                 }
-
             }
-
         }
 
         for (let i = 0; i < shots.length; i++) {
@@ -657,12 +606,8 @@ function createShoot() {
                 shots.splice(i, 1)
                 shotBoxes.splice(i, 1)
             }
-
         }
     }
-
-
-
 }
 
 let countFramesTrail = 0
@@ -778,14 +723,9 @@ function fireRight() {
 
 function animate() {
 
-
     if (destroyed == true) {
         destroy(dX, dY, dZ)
     }
-
-
-
-
 
     if (life != 0) {
         UpdateGummi()
@@ -795,13 +735,11 @@ function animate() {
         fireRight()
     }
 
-
     sphere.rotateY(0.0005)
     sphere.rotateX(0.0001)
     // animate using requestAnimationFrame
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
-
 }
 
 
@@ -857,12 +795,7 @@ function onWindowResize() {
 
 }
 
-
-
-
-
 window.addEventListener("resize", onWindowResize, false)
-
 
 let destroyCounter = 0;
 
@@ -880,7 +813,6 @@ function destroy(x, y, z) {
                 sphere1.position.x = x
                 sphere1.position.y = y
                 sphere1.position.z = z
-
 
                 scene.add(sphere1)
                 sphere1.scale.set(0.2, 0.2, 0.2)
@@ -912,7 +844,6 @@ function destroy(x, y, z) {
             trails3.splice(i, 1)
         });
 
-        //destroyed = false
     }
 }
 
